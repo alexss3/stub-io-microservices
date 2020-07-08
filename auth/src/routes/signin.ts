@@ -7,3 +7,5 @@ router.post('/api/users/signin', (req, res) => {
 });
 
 export { router as signinRouter };
+
+export default router;

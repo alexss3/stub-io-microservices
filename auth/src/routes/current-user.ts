@@ -7,3 +7,5 @@ router.get('/api/users/currentuser', (req, res) => {
 });
 
 export { router as currentUserRouter };
+
+export default router;
