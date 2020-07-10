@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { RequestValidationError } from '../errors/request-validation-error';
-import { DatabaseConnectionError } from '../errors/database-conn-error';
+import { BadRequestError } from '../errors/bad-request-error';
+
+import { User } from '../models/user';
 
 const router = express.Router();
 
@@ -17,7 +19,7 @@ router.post('/api/users/signup', [
             .isLength({ min: PASS_MIN, max: PASS_MAX })
             .withMessage(`Password must be between ${PASS_MIN} and ${PASS_MAX} characters`)
     ], 
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
     
     const errors = validationResult(req);
 
@@ -25,11 +27,22 @@ router.post('/api/users/signup', [
         throw new RequestValidationError(errors.array());
     }
 
-    // const { email, password } = req.body;
-    console.log('Creating user...');
-    throw new DatabaseConnectionError();
-    
-    res.send({});
+    const { email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+       throw new BadRequestError('Email in use');
+    }
+
+    const user = User.build({
+        email,
+        password
+    });
+    await user.save();
+
+    res.status(201).send(user);
+   
 });
 
 export { router as signupRouter };
