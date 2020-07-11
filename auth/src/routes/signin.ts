@@ -50,5 +50,3 @@ router.post('/api/users/signin',
 });
 
 export { router as signinRouter };
-
-export default router;

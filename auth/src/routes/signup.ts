@@ -54,5 +54,3 @@ router.post('/api/users/signup', [
 });
 
 export { router as signupRouter };
-
-export default router;
